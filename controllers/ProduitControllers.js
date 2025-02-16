@@ -1,29 +1,24 @@
 import Produit from '../models/produitModel.js';
 
 export const addProduct = async (req, res) => {
-    const { code_produit, nom, fournisseur, categorie, prix, gratuit, quantite, Stockminimal } = req.body;
+    const { nom, fournisseur, categorie, prix, gratuit, quantite, Stockminimal } = req.body;
+    console.log(req.body);
 
     try {
         // Vérification des champs requis
-        if (!code_produit || !nom || !fournisseur || !categorie || !prix || quantite === undefined || Stockminimal === undefined) {
+        if (!nom || !fournisseur || !categorie || !prix || gratuit === undefined || quantite === undefined || Stockminimal === undefined) {
             return res.status(400).json({ error: 'Tous les champs sont requis' });
         }
 
         // Vérification de l'unicité du code produit
-        const existingProduct = await Produit.findOne({ code_produit });
+        const existingProduct = await Produit.findOne({ nom, fournisseur });
         if (existingProduct) {
-            return res.status(409).json({ error: 'Le code produit doit être unique' });
-        }
-
-        // Vérification de l'existence du produit par nom
-        const existingProductByName = await Produit.findOne({ nom, fournisseur });
-        if (existingProductByName) {
-            existingProductByName.quantite += quantite; // Mise à jour de la quantité
-            await existingProductByName.save();
-            return res.status(200).json({ message: 'Quantité mise à jour', product: existingProductByName });
+            existingProduct.quantite += quantite; // Mise à jour de la quantité
+            await existingProduct.save();
+            return res.status(200).json({ message: 'Quantité mise à jour', product: existingProduct });
         } else {
             // Création d'un nouveau produit
-            const newProduct = new Produit({ code_produit, nom, fournisseur, categorie, prix, gratuit, quantite, Stockminimal });
+            const newProduct = new Produit({ nom, fournisseur, categorie, prix, gratuit, quantite, Stockminimal });
             await newProduct.save();
             return res.status(201).json(newProduct);
         }
@@ -31,6 +26,7 @@ export const addProduct = async (req, res) => {
         res.status(500).json({ error: 'Erreur du serveur', details: error.message });
     }
 };
+
 
 export const getAllProducts = async (req, res) => {
     try {

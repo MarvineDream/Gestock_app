@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 
-const consumptionReportSchema = new mongoose.Schema({
-    code_Produit: { type: String, required: false }, 
-    produit: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, 
+const consumptionReportSchema = new mongoose.Schema({ 
+    nom: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, 
     agence: { type: mongoose.Schema.Types.ObjectId, ref: 'Agency', required: true }, 
     fournisseur: { type: mongoose.Schema.Types.ObjectId, ref: 'supplier', required: true },  
     stockInitial: { type: Number, required: true }, 
