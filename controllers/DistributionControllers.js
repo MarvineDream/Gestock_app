@@ -6,14 +6,14 @@ import mongoose from 'mongoose';
 
 
 export const createDistribution = async (req, res) => {
-    const { code_produit, produit, quantite, destinataire, fournisseur, date } = req.body;
+    const { produit, quantite, destinataire, fournisseur, date } = req.body;
 
-    if (!code_produit || !produit || !quantite || !destinataire || !fournisseur || !date) {
+    if (!produit || !quantite || !destinataire || !fournisseur || !date) {
         return res.status(400).json({ error: 'Tous les champs sont requis' });
     }
 
     try {
-        const productFound = await Produit.findOne({ code_produit });
+        const productFound = await Produit.findOne({ id });
         if (!productFound) {
             return res.status(404).json({ error: 'Produit non trouvé' });
         }
@@ -35,8 +35,7 @@ export const createDistribution = async (req, res) => {
         }
 
         const distribution = new Distribution({
-            code_produit,
-            produit,
+            nom,
             quantite,
             destinataire,
             fournisseur,

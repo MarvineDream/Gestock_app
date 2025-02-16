@@ -47,12 +47,12 @@ export const registerUser = async (req, res) => {
 
 
 export const loginUser = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     // Vérification des entrées
     console.log('Requête de connexion reçue:', { email, password });
     
-    if (!username || !password) {
+    if (!email || !password) {
         console.log('Erreur : Nom d\'utilisateur ou mot de passe manquant');
         return res.status(400).json({ message: 'Nom d\'utilisateur et mot de passe requis' });
     }
@@ -86,7 +86,7 @@ export const loginUser = async (req, res) => {
             return res.status(200).json({ token, redirect: '/root/dashboard', user: { id: user._id, username: user.username } });
         } else if (user.role === 'admin') {
             console.log("Redirection vers le tableau de bord de l'admin de l'agence");
-            return res.status(200).json({ token, redirect: '/admin_agence/dashboard', user: { id: user._id, username: user.username, agency: user.agency } });
+            return res.status(200).json({ token, redirect: '/admin_agence/dashboard', user: { id: user._id, username: user.username, agency: user.agence } });
         } else {
             console.log('Erreur : Rôle non reconnu');
             return res.status(403).json({ message: 'Accès refusé' });
@@ -149,7 +149,7 @@ export const createUserForAgency = async (req, res) => {
             }
         });
 
-        const resetUrl = `https://backend-soutenance-1.onrender.com/admin/create-user/reset-password/${resetToken}`;
+        const resetUrl = `https://gestock-app.onrender.com/User/create-user/reset-password/${resetToken}`;
 
         const mailOptions = {
             from: 'Gestock App',
