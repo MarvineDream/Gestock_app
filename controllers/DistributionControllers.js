@@ -7,7 +7,8 @@ import mongoose from 'mongoose';
 
 export const createDistribution = async (req, res) => {
     const { nom, quantite, destinataire, fournisseur, date } = req.body;
-
+    console.log(req.body);
+    
     // Vérification des champs requis
     if (!nom || !quantite || !destinataire || !fournisseur || !date) {
         return res.status(400).json({ error: 'Tous les champs sont requis' });
@@ -26,8 +27,7 @@ export const createDistribution = async (req, res) => {
         }
 
         // Vérification de la validité de l'agence
-        const agences = await Agence.find(); 
-        const validAgencyIds = agences.map(agence => agence._id.toString()); 
+        const validAgencyIds = await Agence.find().distinct('_id'); // Récupérer uniquement les IDs valides
 
         if (!validAgencyIds.includes(destinataire)) {
             return res.status(400).json({ error: 'Localisation non valide' });
@@ -58,11 +58,28 @@ export const createDistribution = async (req, res) => {
     }
 };
 
+export const getAllDistributions = async (req, res) => {
+    try {
+        // Récupérer toutes les distributions
+        const distributions = await Distribution.find();
+
+        if (!distributions.length) {
+            return res.status(404).json({ error: 'Aucune distribution trouvée' });
+        }
+
+        res.status(200).json(distributions);
+    } catch (error) {
+        res.status(500).json({ error: 'Erreur du serveur', details: error.message });
+    }
+};
+
 export const getDistributionsByDestinataire = async (req, res) => {
-    const { destinataireId } = req.params;
+    const { destinataire } = req.params;
+    console.log('Destinataire:', destinataire);
 
     try {
-        const distributions = await Distribution.find({ destinataire: destinataireId });
+        // Récupérer les distributions pour le destinataire spécifié
+        const distributions = await Distribution.find({ destinataire });
 
         if (!distributions.length) {
             return res.status(404).json({ error: 'Aucune distribution trouvée pour ce destinataire' });
@@ -74,7 +91,6 @@ export const getDistributionsByDestinataire = async (req, res) => {
     }
 };
 
-
 export const deleteDistribution = async (req, res) => {
     try {
         const distribution = await Distribution.findByIdAndDelete(req.params.id);
@@ -85,15 +101,13 @@ export const deleteDistribution = async (req, res) => {
     }
 };
 
-
 export const getDistributionById = async (req, res) => {
     try {
         const distribution = await Distribution.findById(req.params.id)
-        .populate('nom')
-        .populate('agence')
-        .populate('fournisseur')
-        .populate('destinataire')
-        .populate('date');
+            .populate('nom') 
+            .populate('destinataire')
+            .populate('fournisseur'); // Corrigé pour peupler le fournisseur également
+        
         if (!distribution) return res.status(404).json({ message: 'Distribution non trouvée' });
         res.status(200).json(distribution);
     } catch (error) {

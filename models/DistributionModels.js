@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
 
+
 const distributionSchema = new mongoose.Schema({
-    nom: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, 
+    nom: { type: mongoose.Schema.Types.ObjectId, ref: 'Produit', required: true }, 
     quantite: { type: Number, required: true },
-    fournisseur: { type: mongoose.Schema.Types.ObjectId, ref: 'Supplier', required: true }, 
-    destinataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Agency', required: true }, 
+    fournisseur: { type: mongoose.Schema.Types.ObjectId, ref: 'Fournisseur', required: true }, 
+    destinataire: { type: mongoose.Schema.Types.ObjectId, ref: 'Agence', required: true }, 
     date: { type: Date, default: Date.now } 
 }, 
 { timestamps: true });
