@@ -83,10 +83,10 @@ export const loginUser = async (req, res) => {
         // Redirection en fonction du rôle et de l'agence
         if (user.role === 'root') {
             console.log("Redirection vers le tableau de bord de l'admin root");
-            return res.status(200).json({ token, redirect: 'http://localhost:3000/accueil', user: { id: user._id, username: user.username } });
+            return res.status(200).json({ token, redirect: '/accueil', user: { id: user._id, username: user.username } });
         } else if (user.role === 'admin') {
             console.log("Redirection vers le tableau de bord de l'admin de l'agence");
-            return res.status(200).json({ token, redirect: 'http://localhost:3000/admin2', user: { id: user._id, username: user.username, agency: user.agence } });
+            return res.status(200).json({ token, redirect: '/admin2', user: { id: user._id, username: user.username, agency: user.agence } });
         } else {
             console.log('Erreur : Rôle non reconnu');
             return res.status(403).json({ message: 'Accès refusé' });
