@@ -1,12 +1,12 @@
 import Produit from '../models/produitModel.js';
 
 export const addProduct = async (req, res) => {
-    const { nom, fournisseur, categorie, prix, gratuit, quantite, Stockminimal } = req.body;
+    const { nom, fournisseur, categorie, prix, quantite, Stockminimal } = req.body;
     console.log(req.body);
 
     try {
         // Vérification des champs requis
-        if (!nom || !fournisseur || !categorie || !prix || gratuit === undefined || quantite === undefined || Stockminimal === undefined) {
+        if (!nom || !fournisseur || !categorie || !prix || quantite === undefined || Stockminimal === undefined) {
             return res.status(400).json({ error: 'Tous les champs sont requis' });
         }
 
@@ -18,7 +18,7 @@ export const addProduct = async (req, res) => {
             return res.status(200).json({ message: 'Quantité mise à jour', product: existingProduct });
         } else {
             // Création d'un nouveau produit
-            const newProduct = new Produit({ nom, fournisseur, categorie, prix, gratuit, quantite, Stockminimal });
+            const newProduct = new Produit({ nom, fournisseur, categorie, prix, quantite, Stockminimal });
             await newProduct.save();
             return res.status(201).json(newProduct);
         }

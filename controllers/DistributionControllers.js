@@ -6,9 +6,9 @@ import mongoose from 'mongoose';
 
 
 export const createDistribution = async (req, res) => {
-    const { produit, quantite, destinataire, fournisseur, date } = req.body;
+    const { nom, quantite, destinataire, fournisseur, date } = req.body;
 
-    if (!produit || !quantite || !destinataire || !fournisseur || !date) {
+    if (!nom || !quantite || !destinataire || !fournisseur || !date) {
         return res.status(400).json({ error: 'Tous les champs sont requis' });
     }
 
@@ -18,7 +18,7 @@ export const createDistribution = async (req, res) => {
             return res.status(404).json({ error: 'Produit non trouvé' });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(produit)) {
+        if (!mongoose.Types.ObjectId.isValid(nom)) {
             return res.status(400).json({ error: 'ID de produit invalide' });
         }
 
@@ -77,7 +77,7 @@ export const getDistributionsByDestinataire = async (req, res) => {
 
 export const deleteDistribution = async (req, res) => {
     try {
-        const distribution = await Distribute.findByIdAndDelete(req.params.id);
+        const distribution = await Distribution.findByIdAndDelete(req.params.id);
         if (!distribution) return res.status(404).json({ message: 'Distribution non trouvée' });
         res.status(204).send();
     } catch (error) {
@@ -89,10 +89,9 @@ export const deleteDistribution = async (req, res) => {
 export const getDistributionById = async (req, res) => {
     try {
         const distribution = await Distribution.findById(req.params.id)
-        .populate('code_produit')
-        .populate('product')
-        .populate('Agency')
-        .populate('supplier')
+        .populate('nom')
+        .populate('agence')
+        .populate('fournisseur')
         .populate('destinataire')
         .populate('date');
         if (!distribution) return res.status(404).json({ message: 'Distribution non trouvée' });
