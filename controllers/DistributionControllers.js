@@ -9,6 +9,7 @@ export const createDistribution = async (req, res) => {
     const { nom, quantite, destinataire, fournisseur, date } = req.body;
     console.log(req.body);
     
+
     // Vérification des champs requis
     if (!nom || !quantite || !destinataire || !fournisseur || !date) {
         return res.status(400).json({ error: 'Tous les champs sont requis' });
@@ -27,7 +28,8 @@ export const createDistribution = async (req, res) => {
         }
 
         // Vérification de la validité de l'agence
-        const validAgencyIds = await Agence.find().distinct('_id'); // Récupérer uniquement les IDs valides
+        const agences = await Agence.find(); 
+        const validAgencyIds = agences.map(agence => agence._id.toString()); 
 
         if (!validAgencyIds.includes(destinataire)) {
             return res.status(400).json({ error: 'Localisation non valide' });
@@ -74,12 +76,12 @@ export const getAllDistributions = async (req, res) => {
 };
 
 export const getDistributionsByDestinataire = async (req, res) => {
-    const { destinataire } = req.params;
-    console.log('Destinataire:', destinataire);
+    const { agence } = req.params;
+    console.log('Destinataire:', agence);
 
     try {
         // Récupérer les distributions pour le destinataire spécifié
-        const distributions = await Distribution.find({ destinataire });
+        const distributions = await Distribution.find({ agence });
 
         if (!distributions.length) {
             return res.status(404).json({ error: 'Aucune distribution trouvée pour ce destinataire' });

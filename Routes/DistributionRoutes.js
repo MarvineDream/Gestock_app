@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/', createDistribution);
 router.get('/', getAllDistributions);
-router.get('/agence:id', getDistributionsByDestinataire);
+router.get('/:id', getDistributionsByDestinataire);
 router.get('/:id', getDistributionById);
 router.delete('/:id', deleteDistribution);
 
