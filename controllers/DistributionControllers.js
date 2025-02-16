@@ -8,25 +8,24 @@ import mongoose from 'mongoose';
 export const createDistribution = async (req, res) => {
     const { nom, quantite, destinataire, fournisseur, date } = req.body;
 
+    // Vérification des champs requis
     if (!nom || !quantite || !destinataire || !fournisseur || !date) {
         return res.status(400).json({ error: 'Tous les champs sont requis' });
     }
 
     try {
-        const productFound = await Produit.findOne({ id });
+        // Vérification de l'existence du produit
+        const productFound = await Produit.findById(nom);
         if (!productFound) {
             return res.status(404).json({ error: 'Produit non trouvé' });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(nom)) {
-            return res.status(400).json({ error: 'ID de produit invalide' });
-        }
-
+        // Vérification de la quantité
         if (quantite > productFound.quantite) {
             return res.status(400).json({ error: 'Quantité demandée est supérieure à la quantité disponible' });
         }
 
-        
+        // Vérification de la validité de l'agence
         const agences = await Agence.find(); 
         const validAgencyIds = agences.map(agence => agence._id.toString()); 
 
@@ -34,6 +33,7 @@ export const createDistribution = async (req, res) => {
             return res.status(400).json({ error: 'Localisation non valide' });
         }
 
+        // Création de la distribution
         const distribution = new Distribution({
             nom,
             quantite,
@@ -44,6 +44,7 @@ export const createDistribution = async (req, res) => {
 
         await distribution.save();
 
+        // Mise à jour de la quantité du produit
         productFound.quantite -= quantite;
         await productFound.save();
 
@@ -56,7 +57,6 @@ export const createDistribution = async (req, res) => {
         res.status(500).json({ error: 'Erreur du serveur', details: error.message });
     }
 };
-
 
 export const getDistributionsByDestinataire = async (req, res) => {
     const { destinataireId } = req.params;
