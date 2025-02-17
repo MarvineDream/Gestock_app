@@ -76,27 +76,38 @@ export const loginUser = async (req, res) => {
             return res.status(401).json({ message: 'Identifiants invalides' });
         }
 
-        
         const token = generateToken(user._id);
         console.log('Token généré:', token);
         
         // Redirection en fonction du rôle et de l'agence
-        if (user.role === 'root') {
-            console.log("Redirection vers le tableau de bord de l'admin root");
-            return res.status(200).json({ token, redirect: '/accueil', user: { id: user._id, username: user.username } });
-        } else if (user.role === 'admin') {
-            console.log("Redirection vers le tableau de bord de l'admin de l'agence");
-            return res.status(200).json({ token, redirect: '/admin2', user: { id: user._id, username: user.username, agency: user.agence } });
-        } else {
-            console.log('Erreur : Rôle non reconnu');
-            return res.status(403).json({ message: 'Accès refusé' });
+        let redirectPath;
+        
+        switch (user.role) {
+            case 'root':
+                console.log("Redirection vers le tableau de bord de l'admin root");
+                redirectPath = '/accueil';
+                break;
+            case 'admin':
+                console.log("Redirection vers le tableau de bord de l'admin de l'agence");
+                redirectPath = `/user/${user.agence}`;
+                break;
+            default:
+                console.log('Erreur : Rôle non reconnu');
+                return res.status(403).json({ message: 'Accès refusé' });
         }
+
+        return res.status(200).json({
+            token,
+            redirect: redirectPath,
+            user: { id: user._id, username: user.username, agency: user.agence }
+        });
 
     } catch (error) {
         console.error('Erreur lors de la connexion utilisateur:', error);
         res.status(500).json({ message: 'Erreur interne du serveur' });
     }
 };
+
 
 
 export const createUserForAgency = async (req, res) => {

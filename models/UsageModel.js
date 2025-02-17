@@ -7,7 +7,7 @@ const usageSchema = new mongoose.Schema({
     quantiteUtilisee: { type: Number, required: true },
     date: { type: Date, default: Date.now }
 },
-{ timestaps: true });
+{ timestamps: true });
 
 const Usage = mongoose.model('usage', usageSchema);
 
