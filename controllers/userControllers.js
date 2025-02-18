@@ -89,7 +89,7 @@ export const loginUser = async (req, res) => {
                 break;
             case 'admin':
                 console.log("Redirection vers le tableau de bord de l'admin de l'agence");
-                redirectPath = `/user/${user.agence}`;
+                redirectPath = `/admin2`;
                 break;
             default:
                 console.log('Erreur : Rôle non reconnu');
